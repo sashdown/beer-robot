@@ -2,7 +2,7 @@
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-from actions import wait_until_temperature_has_risen_to
+from actions import raise_temperature_for
 
-def test_wait_until_temperature_has_risen_to():
-    wait_until_temperature_has_risen_to(temperature=100, minutes = 0)
+def test_raise_temperature_for():
+    raise_temperature_for(target_temperature=100, minutes = 0)

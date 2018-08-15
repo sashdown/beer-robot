@@ -14,7 +14,7 @@ def init():
 
 def get_temperature_device_file():
     base_dir = '/sys/bus/w1/devices/'
-    os.system('ls {}'.format(base_dir))
+    os.system('ls {} > /dev/null'.format(base_dir))   # Why does it need an ls - need to experiment with retry mech
     device_folder = glob.glob(base_dir + '28*')[0]
     return  device_folder + '/w1_slave'
 
