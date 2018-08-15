@@ -1,5 +1,5 @@
 import logging
-from datetime import  datetime
+from datetime import datetime
 from time import sleep
 
 from temperature import read_temp
@@ -17,8 +17,6 @@ MONITOR_BOILER_SWITCHOFF_DELAY = 1
 
 ENERGENIE_BOILER_SOCKET_NUMBER = 2
 ENERGENIE_PUMP_SOCKET_NUMBER = 2
-
-
 
 
 def wait(minutes):
@@ -89,13 +87,12 @@ def wait_until_temperature_has_fallen_to(target_temperature,
                                          pump,
                                          read_delay=10,
                                          temperature_fn=read_temp()):
-
-    previous_temperature=temperature_fn()
+    previous_temperature = temperature_fn()
     static_temperature_count = 0
 
-    while (previous_temperature > target_temperature): # alert if temperature does not drop within 1 minute
+    while (previous_temperature > target_temperature):  # alert if temperature does not drop within 1 minute
         pump.on()
-        logging.debug("Waiting to fall to {}. Current temp {}".format(target_temperature, previous_temperature))
+        logging.debug("Waiting for measured temperature to fall to {}C. Current temp {}C".format(target_temperature, previous_temperature))
         sleep(read_delay)
 
         current_temperature = temperature_fn()
@@ -107,7 +104,9 @@ def wait_until_temperature_has_fallen_to(target_temperature,
 
         if static_temperature_count > 5:
             pump.off()
-            raise RuntimeError("Temperature failed to drop after 5 iterations")
+            raise RuntimeError("Temperature failed to drop after 5 iterations.  Current temperature {}C".format(
+                current_temperature
+            ))
 
         previous_temperature = current_temperature
 
@@ -135,4 +134,3 @@ def manual_action(action):
     message("ACTION REQUIRED: {}".format(action))
     input(action)
     message("COMPLETE: {}".format(action))
-
