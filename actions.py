@@ -89,10 +89,28 @@ def wait_until_temperature_has_fallen_to(target_temperature,
                                          pump,
                                          read_delay=10,
                                          temperature_fn=read_temp()):
-    while (temperature_fn() > target_temperature): # alert if temperature does not drop within 1 minute
+
+    previous_temperature=temperature_fn()
+    static_temperature_count = 0
+
+    while (previous_temperature > target_temperature): # alert if temperature does not drop within 1 minute
         pump.on()
-        logging.debug("Waiting to fall to {}. Current temp {}".format(target_temperature, temperature_fn()))
+        logging.debug("Waiting to fall to {}. Current temp {}".format(target_temperature, previous_temperature))
         sleep(read_delay)
+
+        current_temperature = temperature_fn()
+
+        if current_temperature < previous_temperature:
+            static_temperature_count = 0
+        else:
+            static_temperature_count += 1
+
+        if static_temperature_count > 5:
+            pump.off()
+            raise RuntimeError("Temperature failed to drop after 5 iterations")
+
+        previous_temperature = current_temperature
+
     pump.off()
     logging.debug("Target temperature reached")
 
