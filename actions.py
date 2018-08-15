@@ -1,18 +1,24 @@
 import logging
-from datetime import date, datetime
+from datetime import  datetime
 from time import sleep
 
 from temperature import read_temp
 
 MONITOR_BOILER_SWITCHOFF_DELAY = 1
 
+# the sockets should be passed in at object creation time.
+# but refactoring without a test is uncomfortable
+
+
+# is there a missing TemperatureController class?
+# with public methods to raise and lower the temperature
+# private methods to switch on and off pump and boiler
+
+
 ENERGENIE_BOILER_SOCKET_NUMBER = 2
 ENERGENIE_PUMP_SOCKET_NUMBER = 2
 
-from gpiozero import Energenie
 
-boiler_socket = Energenie(ENERGENIE_BOILER_SOCKET_NUMBER)
-pump_socket = Energenie(ENERGENIE_PUMP_SOCKET_NUMBER)
 
 
 def wait(minutes):
@@ -20,25 +26,39 @@ def wait(minutes):
 
 
 def switch_on_boiler():
+    from gpiozero import Energenie
+    boiler_socket = Energenie(ENERGENIE_BOILER_SOCKET_NUMBER)
     boiler_socket.on()
 
     logging.debug("Boiler On")
 
 
 def switch_on_pump():
+    from gpiozero import Energenie
+    pump_socket = Energenie(ENERGENIE_PUMP_SOCKET_NUMBER)
     pump_socket.on()
 
     logging.debug("Pump On")
 
 
 def switch_off_boiler():
+    from gpiozero import Energenie
+    boiler_socket = Energenie(ENERGENIE_BOILER_SOCKET_NUMBER)
     logging.debug("Pump Off")
     boiler_socket.off()
 
 
 def switch_off_pump():
+    pump_socket = create_pump()
+    pump_socket.on()
     logging.debug("Pump Off")
     pump_socket.off()
+
+
+def create_pump():
+    from gpiozero import Energenie
+    pump_socket = Energenie(ENERGENIE_PUMP_SOCKET_NUMBER)
+    return pump_socket
 
 
 def raise_temperature_for(target_temperature, target_minutes=0):
@@ -65,12 +85,15 @@ def raise_temperature(target_temperature):
     logging.debug("Target temperature {} reached.  Now {}C".format(target_temperature, read_temp()))
 
 
-def wait_until_temperature_has_fallen_to(target_temperature):
-    while (read_temp() > target_temperature): # alert if temperature does not drop within 1 minute
-        switch_on_pump()
-        logging.debug("Waiting to fall to {}. Current temp {}".format(target_temperature, read_temp()))
-        sleep(10)
-    switch_off_pump()
+def wait_until_temperature_has_fallen_to(target_temperature,
+                                         pump,
+                                         read_delay=10,
+                                         temperature_fn=read_temp()):
+    while (temperature_fn() > target_temperature): # alert if temperature does not drop within 1 minute
+        pump.on()
+        logging.debug("Waiting to fall to {}. Current temp {}".format(target_temperature, temperature_fn()))
+        sleep(read_delay)
+    pump.off()
     logging.debug("Target temperature reached")
 
 
