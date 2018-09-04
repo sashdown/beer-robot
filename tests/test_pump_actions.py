@@ -40,17 +40,16 @@ def test_pump_switches_on_above_target_temp(pump, temperature):
     pump.on.assert_called_once()
 
 
-def test_pump_switches_off_after_failing_to_reduce_temp_after_6_attempts(pump, temperature):
-    temperature.return_value = 11
-    temperature.side_effect=None
+def test_pump_switches_off_after_failing_to_reduce_temp_after_6_attempts(pump):
+    TARGET_TEMPERATURE = 10
 
     try:
-        wait_until_temperature_has_fallen_to(target_temperature=10,
-                                         pump=pump,
-                                         read_delay=0,
-                                         temperature_fn=temperature)
+        wait_until_temperature_has_fallen_to(target_temperature=TARGET_TEMPERATURE,
+                                             pump=pump,
+                                             read_delay=0,
+                                             temperature_fn=lambda: TARGET_TEMPERATURE + 1)
 
-        assert(False)
+        assert False
 
     except RuntimeError as e:
-        pass
+        assert e.args[0].startswith("Temperature failed to drop after 5 iterations")

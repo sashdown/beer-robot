@@ -42,9 +42,9 @@ def switch_on_pump():
 def switch_off_boiler():
     from gpiozero import Energenie
     boiler_socket = Energenie(ENERGENIE_BOILER_SOCKET_NUMBER)
-    logging.debug("Pump Off")
     boiler_socket.off()
 
+    logging.debug("Boiler Off")
 
 def switch_off_pump():
     pump_socket = create_pump()
@@ -60,15 +60,18 @@ def create_pump():
 
 
 def raise_temperature_for(target_temperature, target_minutes=0):
+
     raise_temperature(target_temperature)
 
     logging.debug("Holding at {} for {} minutes".format(target_temperature, target_minutes))
+
     start = datetime.now()
     while ((datetime.now() - start).seconds < target_minutes * 60):
         logging.debug("Waiting 30 seconds before re-reading temperature")
         sleep(30)
         logging.debug("Current temperature {}C".format(read_temp()))
         raise_temperature(target_temperature)
+
     logging.debug("Held at {} for {} seconds ".format(target_temperature, (datetime.now() - start).seconds))
 
 
@@ -80,6 +83,7 @@ def raise_temperature(target_temperature):
             target_temperature, read_temp()))
         sleep(MONITOR_BOILER_SWITCHOFF_DELAY)
     switch_off_boiler()
+
     logging.debug("Target temperature {} reached.  Now {}C".format(target_temperature, read_temp()))
 
 
