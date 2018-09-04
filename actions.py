@@ -85,12 +85,12 @@ def raise_temperature(target_temperature):
 
 def wait_until_temperature_has_fallen_to(target_temperature,
                                          pump,
-                                         read_delay=10,
-                                         temperature_fn=read_temp()):
+                                         read_delay=30,
+                                         temperature_fn=read_temp):
     previous_temperature = temperature_fn()
     static_temperature_count = 0
 
-    while (previous_temperature > target_temperature):  # alert if temperature does not drop within 1 minute
+    while (previous_temperature > target_temperature):
         pump.on()
         logging.debug("Waiting for measured temperature to fall to {}C. Current temp {}C".format(target_temperature, previous_temperature))
         sleep(read_delay)
