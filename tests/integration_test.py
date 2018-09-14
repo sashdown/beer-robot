@@ -3,11 +3,11 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 from temperature import read_temp, init
-from actions import message, raise_temperature_for, manual_action
+from actions import message, raise_temperature_for, action
 
 init()
 
-manual_action("Confirm Start")
+action("Confirm Start")
 
 message("Boiling for 1 minute")
 

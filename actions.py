@@ -46,6 +46,7 @@ def switch_off_boiler():
 
     logging.debug("Boiler Off")
 
+
 def switch_off_pump():
     pump_socket = create_pump()
     pump_socket.on()
@@ -60,13 +61,12 @@ def create_pump():
 
 
 def raise_temperature_for(target_temperature, target_minutes=0):
-
     raise_temperature(target_temperature)
 
     logging.debug("Holding at {} for {} minutes".format(target_temperature, target_minutes))
 
     start = datetime.now()
-    while ((datetime.now() - start).seconds < target_minutes * 60):
+    while (datetime.now() - start).seconds < target_minutes * 60:
         logging.debug("Waiting 30 seconds before re-reading temperature")
         sleep(30)
         logging.debug("Current temperature {}C".format(read_temp()))
@@ -76,7 +76,7 @@ def raise_temperature_for(target_temperature, target_minutes=0):
 
 
 def raise_temperature(target_temperature):
-    while (read_temp() < target_temperature):
+    while read_temp() < target_temperature:
         switch_on_boiler()
         logging.debug("Boiler On.  Waiting {} secs to rise to  {}. Current temp {}".format(
             MONITOR_BOILER_SWITCHOFF_DELAY,
@@ -94,9 +94,10 @@ def wait_until_temperature_has_fallen_to(target_temperature,
     previous_temperature = temperature_fn()
     static_temperature_count = 0
 
-    while (previous_temperature > target_temperature):
+    while previous_temperature > target_temperature:
         pump.on()
-        logging.debug("Waiting for measured temperature to fall to {}C. Current temp {}C".format(target_temperature, previous_temperature))
+        logging.debug("Waiting for measured temperature to fall to {}C. Current temp {}C".format(target_temperature,
+                                                                                                 previous_temperature))
         sleep(read_delay)
 
         current_temperature = temperature_fn()
@@ -134,7 +135,7 @@ def message(action):
     print(action)
 
 
-def manual_action(action):
+def action(action):
     message("ACTION REQUIRED: {}".format(action))
     input(action)
     message("COMPLETE: {}".format(action))
