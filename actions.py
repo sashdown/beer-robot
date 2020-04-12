@@ -4,7 +4,7 @@ from time import sleep
 
 from temperature import read_temp
 
-MONITOR_BOILER_SWITCHOFF_DELAY = 1
+MONITOR_BOILER_SWITCHOFF_DELAY = 30
 
 # the sockets should be passed in at object creation time.
 # but refactoring without a test is uncomfortable
@@ -60,6 +60,15 @@ def create_pump():
     return pump_socket
 
 
+def boil_for(minutes=60):
+
+    start = datetime.now()
+    while (datetime.now() - start).seconds < minutes * 60:
+        switch_on_boiler()
+        sleep(60)
+    switch_off_boiler()
+
+
 def raise_temperature_for(target_temperature, target_minutes=0):
     raise_temperature(target_temperature)
 
@@ -88,14 +97,15 @@ def raise_temperature(target_temperature):
 
 
 def wait_until_temperature_has_fallen_to(target_temperature,
-                                         pump,
+                                         pump=None,
                                          read_delay=30,
                                          temperature_fn=read_temp):
     previous_temperature = temperature_fn()
     static_temperature_count = 0
 
     while previous_temperature > target_temperature:
-        pump.on()
+        if (pump):
+            pump.on()
         logging.debug("Waiting for measured temperature to fall to {}C. Current temp {}C".format(target_temperature,
                                                                                                  previous_temperature))
         sleep(read_delay)
@@ -107,7 +117,7 @@ def wait_until_temperature_has_fallen_to(target_temperature,
         else:
             static_temperature_count += 1
 
-        if static_temperature_count > 5:
+        if pump and static_temperature_count > 5:
             pump.off()
             raise RuntimeError("Temperature failed to drop after 5 iterations.  Current temperature {}C".format(
                 current_temperature
@@ -115,7 +125,8 @@ def wait_until_temperature_has_fallen_to(target_temperature,
 
         previous_temperature = current_temperature
 
-    pump.off()
+    if pump:
+        pump.off()
     logging.debug("Target temperature reached")
 
 
