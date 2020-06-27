@@ -2,10 +2,10 @@
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-from temperature import read_temp, init
+from temperature import read_temp, initialise_temperature_probe
 from actions import message, raise_temperature_for, action
 
-init()
+initialise_temperature_probe()
 
 action("Confirm Start")
 

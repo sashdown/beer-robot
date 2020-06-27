@@ -3,7 +3,7 @@ import glob
 import time
 
 
-def init():
+def initialise_temperature_probe():
   import RPi.GPIO as GPIO
 
   GPIO.setmode(GPIO.BCM)

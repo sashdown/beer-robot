@@ -4,7 +4,7 @@ from time import sleep
 
 from temperature import read_temp
 
-MONITOR_BOILER_SWITCHOFF_DELAY = 30
+MONITOR_BOILER_SWITCHOFF_DELAY = 7
 
 # the sockets should be passed in at object creation time.
 # but refactoring without a test is uncomfortable

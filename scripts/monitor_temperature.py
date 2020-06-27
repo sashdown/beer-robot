@@ -1,7 +1,7 @@
-from temperature import read_temp, init
+from temperature import read_temp, initialise_temperature_probe
 import time
 
-init()
+initialise_temperature_probe()
 
 while True:
     print(read_temp())

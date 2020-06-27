@@ -31,4 +31,4 @@ with manage(create_pump()) as pump:
             logging.debug('Waiting {} mins : temp {} C : max {}'.format(CYCLE_MINUTES, read_temp(), MAX_TEMPERATURE))
             sleep(CYCLE_MINUTES * 60)
     except Exception as e:
-        message("Error recieved.  Exiting {}".format(e))
+        message("Error received.  Exiting {}".format(e))
