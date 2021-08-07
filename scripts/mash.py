@@ -12,7 +12,7 @@ import initialise_logging
 from actions import action, raise_temperature
 from actions import  raise_temperature_for, message, wait_until_temperature_has_fallen_to, boil_for
 
-MASH_TEMPERATURE = 65
+MASH_TEMPERATURE = 66
 STRIKE_TEMPERATURE=MASH_TEMPERATURE+1
 MASH_OUT_TEMPERATURE = 77
 BOILING_TEMPERATURE = 98
@@ -34,9 +34,8 @@ raise_temperature(target_temperature=STRIKE_TEMPERATURE)
 action('Add Grain')
 raise_temperature_for(target_temperature=MASH_TEMPERATURE, target_minutes=MASH_MINUTES)
 
-action('Replace  Grain')
-
-raise_temperature_for(target_temperature=MASH_TEMPERATURE, target_minutes=MASH_MINUTES)
+#action('Replace  Grain')
+#raise_temperature_for(target_temperature=MASH_TEMPERATURE, target_minutes=MASH_MINUTES)
 
 message('Mash Out')
 raise_temperature_for(target_temperature=MASH_OUT_TEMPERATURE)
